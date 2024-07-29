@@ -1,0 +1,105 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Add Data {% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    {% if messages %}
+        <div class="alert alert-success">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form id="subcategory-form" method="GET" action="{% url 'data' %}">
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="subcategory-select" class="bmd-label-floating">Subcategory</label>
+                    <select class="form-control" name="subcategory" id="subcategory-select" onchange="document.getElementById('subcategory-form').submit();">
+                        <option value="">Select Subcategory</option>
+                        {% for subcategory in subcategories %}
+                            <option value="{{ subcategory.id }}" {% if subcategory.id|stringformat:'s' == request.GET.subcategory %}selected{% endif %}>{{ subcategory.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% if elements %}
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for element in elements %}
+            <tr>
+                <td>{{ element.title }}</td>
+                <td>{{ element.get_element_type_display }}</td>
+                <td>
+                    <a href="?subcategory={{ request.GET.subcategory }}&element={{ element.id }}" class="btn btn-primary">Add Value</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if selected_element %}
+    <div id="element-form-container">
+        <h4 class="mt-4">Add Value to: {{ selected_element.title }}</h4>
+        <form id="element-form" action="{% url 'data' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="element" id="element-id" value="{{ selected_element.id }}">
+            <div class="row" id="value-input-row">
+                <!-- This will be populated by JavaScript based on the element type -->
+            </div>
+            <button type="submit" class="btn btn-primary">Save Data</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock content %}
+{% block javascripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const valueInputRow = document.getElementById('value-input-row');
+
+    function updateInputField(elementType) {
+        valueInputRow.innerHTML = '';
+
+        if (elementType === 'number') {
+            valueInputRow.innerHTML = '<div class="col-md-12"><div class="form-group"><label class="bmd-label-floating">Value</label><input type="number" class="form-control" name="value" placeholder="Value"></div></div>';
+        } else if (elementType === 'text') {
+            valueInputRow.innerHTML = '<div class="col-md-12"><div class="form-group"><label class="bmd-label-floating">Value</label><input type="text" class="form-control" name="value" placeholder="Value"></div></div>';
+        } else if (elementType === 'image') {
+            valueInputRow.innerHTML = '<div class="col-md-12"><div class="form-group"><label class="bmd-label-floating">Upload Image</label><input type="file" class="form-control" name="value" accept="image/*"></div></div>';
+        } else if (elementType === 'pdf') {
+            valueInputRow.innerHTML = '<div class="col-md-12"><div class="form-group"><label class="bmd-label-floating">Upload PDF</label><input type="file" class="form-control" name="value" accept="application/pdf"></div></div>';
+        }
+    }
+
+    // Get selected element type from the template context
+    const selectedElementType = "{{ selected_element.element_type }}";
+    if (selectedElementType) {
+        updateInputField(selectedElementType);
+    }
+
+    // Event listener for changing element
+    const elementSelect = document.getElementById('element-select');
+    if (elementSelect) {
+        elementSelect.addEventListener('change', function() {
+            const selectedOption = elementSelect.options[elementSelect.selectedIndex];
+            const selectedType = selectedOption.getAttribute('data-type');
+            updateInputField(selectedType);
+        });
+    }
+});
+</script>
+{% endblock javascripts %}

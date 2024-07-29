@@ -1,0 +1,58 @@
+<nav class="sidenav navbar navbar-vertical fixed-left navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+    <div class="scrollbar-inner">
+      <!-- Brand -->
+      <div class="sidenav-header align-items-center">
+        <a class="navbar-brand" href="/">
+          <img src="/static/assets/img/brand/logo.png" class="navbar-brand-img" alt="Documentation System">
+          <p class="text-sm">Dynamic Documentation System</p>
+        </a>
+      </div>
+      <div class="navbar-inner">
+        <!-- Collapse -->
+        <div class="collapse navbar-collapse" id="sidenav-collapse-main">
+          <!-- Nav items -->
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link {% if 'dashboard' in segment %} active {% endif %}" href="{% url 'dashboard' %}">
+                <i class="ni ni-tv-2 text-default"></i>
+                <span class="nav-link-text">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if 'add_category' in segment %} active {% endif %}" href="{% url 'add_category' %}">
+                <i class="ni ni-fat-add text-default"></i>
+                <span class="nav-link-text">Add Category</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if 'add_subcategory' in segment %} active {% endif %}" href="{% url 'add_subcategory' %}">
+                <i class="ni ni-fat-add text-default"></i>
+                <span class="nav-link-text">Add Subcategory</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if 'add_element' in segment %} active {% endif %}" href="{% url 'add_element' %}">
+                <i class="ni ni-collection text-default"></i>
+                <span class="nav-link-text">Elements</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link {% if 'data' in segment %} active {% endif %}" href="{% url 'data' %}">
+                <i class="ni ni-database text-default"></i>
+                <span class="nav-link-text">Data</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">
+                <i class="ni ni-user-run text-red"></i>
+                <span class="nav-link-text">Logout</span>
+              </a>
+            </li>
+          </ul>
+          <!-- Divider -->
+          <hr class="my-3">
+        </div>
+      </div>
+    </div>
+  </nav>
+  

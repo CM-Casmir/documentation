@@ -1,0 +1,43 @@
+{% extends 'layouts/base2.html' %}
+
+{% block title %} Dashboard {% endblock title %}
+
+{% block content %}
+<div class="container">
+    <h2>Dashboard</h2>
+
+    <!-- Categories and Elements Table -->
+    <h3>Categories</h3>
+    {% for category in categories %}
+    <div class="mb-4">
+        <h4>{{ category.name }}</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Subcategory Name</th>
+                    <th>Element Title</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subcategory in category.subcategories.all %}
+                    {% for element in subcategory.elements.all %}
+                        <tr>
+                            <td>{{ subcategory.name }}</td>
+                            <td>{{ element.title }}</td>
+                            <td>{{ element.get_element_type_display }}</td>
+                            <td>
+                                {% with data=element.data.first %}
+                                    {{ data.value }}
+                                {% endwith %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

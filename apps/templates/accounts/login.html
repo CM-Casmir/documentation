@@ -1,0 +1,103 @@
+{% extends 'layouts/base-fullscreen.html' %}
+
+{% block title %} Login {% endblock title %}
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+<style>
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .card-custom-width {
+    max-width: 900px;
+    width: 100%;
+  }
+  .error-message {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        font-weight: bold;
+      }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Page content -->
+<div class="container center-container">
+  <div class="row justify-content-center">
+      <div class="col-lg-10 col-md-12">
+          <div class="card bg-secondary shadow border-0 card-custom-width">
+              <div class="card-header bg-transparent pb-5">
+                  <div class="text-muted text-center mt-2 mb-3">
+                      Sign IN
+                  </div>
+              </div>
+              <div class="card-body px-lg-5 py-lg-5">
+                <div class="text-muted text-center mt-2 mb-4">
+                    <h1 class="text-white">
+                        <a target="_blank" class="text-white" href="" style="display: flex; align-items: center; text-decoration: none;">
+                            <img src="/static/assets/img/brand/logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                            <span style="color: black; font-size: 24px; font-weight: bold;">Dynamic Documentation System</span>
+                        </a>
+                    </h1>
+                </div>
+                
+                  <div class="error-message">
+                      {% if msg %}
+                          <p>{{ msg }}</p>
+                      {% else %}
+                          <p>Add your credentials</p>
+                      {% endif %}
+                  </div>
+                  <form method="POST">
+                      {% csrf_token %}
+                      <div class="form-group mb-3">
+                          <label for="id_username">Email</label>
+                          <div class="input-group input-group-alternative">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                              </div>
+                              {{ form.email }}
+                          </div>
+                      </div>
+                      <div class="form-group mb-3">
+                          <label for="id_password">Password</label>
+                          <div class="input-group input-group-alternative">
+                              <div class="input-group-prepend">
+                                  <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                              </div>
+                              {{ form.password }}
+                          </div>
+                      </div>
+                      <div class="custom-control custom-checkbox">
+                          <input class="custom-control-input" id="customCheckLogin" type="checkbox">
+                          <label class="custom-control-label" for="customCheckLogin">
+                              <span class="text-muted">Remember me</span>
+                          </label>
+                      </div>
+                      <div class="text-center">
+                          <button type="submit" class="btn btn-primary my-4">Sign in</button>
+                      </div>
+                  </form>
+                  <div class="row mt-3">
+                    <div class="col-6">
+                        <a href="{% url 'register' %}" class="text-light"><small>Register</small></a>
+                    </div>
+                </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}{% endblock javascripts %}

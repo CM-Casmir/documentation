@@ -1,0 +1,125 @@
+{% extends 'layouts/base-fullscreen.html' %}
+
+{% block title %} Register {% endblock title %}
+
+{% block stylesheets %}
+<style>
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+.card-custom-width {
+    max-width: 700px;
+    width: 100%;
+}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container center-container">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12">
+            <div class="card bg-secondary shadow border-0 card-custom-width">
+                <div class="card-header bg-transparent pb-5">
+                    <div class="text-muted text-center mt-2 mb-4">
+                        Sign UP
+                    </div>
+                </div>
+                <div class="card-body px-lg-5 py-lg-5">
+                    <div class="text-muted text-center mt-2 mb-4">
+                        <h1 class="text-white">
+                            <a target="_blank" class="text-white" href="" style="display: flex; align-items: center; text-decoration: none;">
+                                <img src="/static/assets/img/brand/logo.png" alt="Logo" style="height: 40px; margin-right: 10px;">
+                                <span style="color: black; font-size: 24px; font-weight: bold;">Dynamic Documentation System</span>
+                            </a>
+                        </h1>
+                    </div>
+                    <div class="text-center text-muted mb-4">
+                        {% if msg %}
+                            <div class="alert alert-danger">
+                                <p>{{ msg }}</p>
+                            </div>
+                        {% endif %}
+                        <!-- {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-success">
+                                    <p>{{ message }}</p>
+                                </div>
+                            {% endfor %}
+                        {% endif %} -->
+                        {% if not success %}
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="form-group mb-3">
+                                    <label for="id_fullname">Full Name</label>
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
+                                        </div>
+                                        <input type="text" name="fullname" id="id_fullname" class="form-control" placeholder="Full Name" required>
+                                    </div>
+                                    <span class="text-error">{{ form.fullname.errors }}</span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="id_email">Email</label>
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                                        </div>
+                                        <input type="email" name="email" id="id_email" class="form-control" placeholder="Email" required>
+                                    </div>
+                                    <span class="text-error">{{ form.email.errors }}</span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="id_phone_number">Phone Number</label>
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
+                                        </div>
+                                        <input type="text" name="phone_number" id="id_phone_number" class="form-control" placeholder="Phone Number" required>
+                                    </div>
+                                    <span class="text-error">{{ form.phone_number.errors }}</span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="id_password1">Password</label>
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                                        </div>
+                                        <input type="password" name="password1" id="id_password1" class="form-control" placeholder="Password" required>
+                                    </div>
+                                    <span class="text-error">{{ form.password1.errors }}</span>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="id_password2">Confirm Password</label>
+                                    <div class="input-group input-group-alternative">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
+                                        </div>
+                                        <input type="password" name="password2" id="id_password2" class="form-control" placeholder="Confirm Password" required>
+                                    </div>
+                                    <span class="text-error">{{ form.password2.errors }}</span>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary mt-4">Create account</button>
+                                </div>
+                            </form>
+                        {% endif %}
+                        <div class="row mt-3">
+                            <div class="col-3"></div>
+                            <div class="col-3">
+                                <a href="{% url 'login' %}" class="text-light"><small>Login</small></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}{% endblock javascripts %}

@@ -1,0 +1,152 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Dashboard {% endblock title %}
+
+{% block content %}
+<div class="container">
+    <h2>Dashboard</h2>
+
+    <!-- Users Table -->
+    <h3>Users</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.email }}</td>
+                <td>
+                    {{ user.is_active|yesno:"Active,Inactive" }}
+                    <a href="{% url 'change_status' user.id %}" class="btn btn-sm btn-secondary ml-2">
+                        {{ user.is_active|yesno:"Deactivate,Activate" }}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Categories and Elements Table -->
+    <h3>Categories</h3>
+    {% for category in categories %}
+    <div class="mb-4">
+        <h4>{{ category.name }}</h4>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Subcategory Name</th>
+                    <th>Element Title</th>
+                    <th>Type</th>
+                    <th>Value</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for subcategory in category.subcategories.all %}
+                    {% for element in subcategory.elements.all %}
+                        <tr>
+                            <td>{{ subcategory.name }}</td>
+                            <td>{{ element.title }}</td>
+                            <td>{{ element.get_element_type_display }}</td>
+                            <td>
+                                {% with data=element.data.first %}
+                                    {{ data.value }}
+                                    {% if element.element_type == 'image' %}
+                                        <a href="{{ data.value.url }}" target="_blank" class="btn btn-sm btn-info mt-2">View Image</a>
+                                    {% elif element.element_type == 'pdf' %}
+                                        <a href="{{ data.value.url }}" target="_blank" class="btn btn-sm btn-info mt-2">View PDF</a>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                            <td>
+                                <button class="btn btn-primary btn-sm edit-btn" data-element-id="{{ element.id }}" data-element-type="{{ element.element_type }}" data-value="{{ data.value.url|default_if_none:'' }}">Edit</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Edit Element Modal -->
+<div class="modal fade" id="editElementModal" tabindex="-1" role="dialog" aria-labelledby="editElementModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editElementModalLabel">Edit Element</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-element-form" action="{% url 'edit_element_value' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="element_id" id="modal-element-id">
+            <div class="form-group">
+                <label for="modal-element-value" id="modal-element-label">Value</label>
+                <div id="modal-element-input-container"></div>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" form="edit-element-form" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const editButtons = document.querySelectorAll('.edit-btn');
+    const modal = $('#editElementModal');
+    const modalLabel = document.getElementById('modal-element-label');
+    const modalInputContainer = document.getElementById('modal-element-input-container');
+    const modalForm = document.getElementById('edit-element-form');
+    const modalElementId = document.getElementById('modal-element-id');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const elementId = this.getAttribute('data-element-id');
+            const elementType = this.getAttribute('data-element-type');
+            const value = this.getAttribute('data-value');
+
+            modalElementId.value = elementId;
+
+            let inputField = '';
+
+            if (elementType === 'number') {
+                inputField = `<input type="number" class="form-control" name="value" id="modal-element-value" value="${value}">`;
+            } else if (elementType === 'text') {
+                inputField = `<input type="text" class="form-control" name="value" id="modal-element-value" value="${value}">`;
+            } else if (elementType === 'image') {
+                inputField = `
+                    <input type="file" class="form-control" name="value" id="modal-element-value" accept="image/*">
+                    ${value ? `<img src="${value}" alt="Current Image" class="img-fluid mt-3">` : ''}
+                `;
+            } else if (elementType === 'pdf') {
+                inputField = `
+                    <input type="file" class="form-control" name="value" id="modal-element-value" accept="application/pdf">
+                    ${value ? `<a href="${value}" target="_blank" class="btn btn-secondary mt-3">View Current PDF</a>` : ''}
+                `;
+            } else {
+                inputField = `<input type="text" class="form-control" name="value" id="modal-element-value" value="${value}">`;
+            }
+
+            modalInputContainer.innerHTML = inputField;
+            modalLabel.innerText = elementType.charAt(0).toUpperCase() + elementType.slice(1);
+            modal.modal('show');
+        });
+    });
+});
+</script>
+{% endblock javascripts %}
